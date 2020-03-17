@@ -12,11 +12,11 @@ using MyFace.Repositories;
 
 namespace MyFace.Helpers
 {
-    public class AuthenticateUserHelper : AuthenticationHandler<AuthenticationSchemeOptions>
+    public class BasicAuthenticateHelper : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IUsersRepo _usersRepo;
 
-        public AuthenticateUserHelper(
+        public BasicAuthenticateHelper(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,

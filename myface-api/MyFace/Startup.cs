@@ -49,7 +49,7 @@ namespace MyFace
 
             //configure basic authentication
             services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, AuthenticateUserHelper>("BasicAuthentication", null);
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticateHelper>("BasicAuthentication", null);
 
             services.AddTransient<IPostsRepo, PostsRepo>();
             services.AddTransient<IUsersRepo, UsersRepo>();

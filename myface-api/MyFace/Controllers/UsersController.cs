@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyFace.Models.Database;
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
@@ -21,9 +22,9 @@ namespace MyFace.Controllers
         
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserRequest model)
+        public IActionResult Authenticate([FromBody] AuthenticateUserRequest model)
         {
-            var user = await _users.Authenticate(model.Username, model.Password);
+            var user = _users.Authenticate(model.Username, model.Password);
 
             if (user == null)
                 return BadRequest(new {message = "Username or password is incorrect"});
