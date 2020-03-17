@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MyFace.Helpers;
 using MyFace.Repositories;
 
 namespace MyFace
@@ -44,7 +46,11 @@ namespace MyFace
             });
             
             services.AddControllers();
-            
+
+            //configure basic authentication
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, AuthenticateUserHelper>("BasicAuthentication", null);
+
             services.AddTransient<IPostsRepo, PostsRepo>();
             services.AddTransient<IUsersRepo, UsersRepo>();
         }
@@ -67,6 +73,9 @@ namespace MyFace
             app.UseRouting();
 
             app.UseCors(CORS_POLICY_NAME);
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

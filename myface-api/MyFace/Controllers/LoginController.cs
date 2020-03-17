@@ -6,9 +6,6 @@ namespace MyFace.Controllers
 {
     public class LoginController : ControllerBase
     {
-        /*public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserRequest model)
-        {
-            var user = await 
-        }*/
+      
     }
 }

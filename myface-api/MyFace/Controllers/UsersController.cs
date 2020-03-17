@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
 
 namespace MyFace.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/users")]
     public class UsersController : ControllerBase
@@ -14,6 +17,18 @@ namespace MyFace.Controllers
         public UsersController(IUsersRepo users)
         {
             _users = users;
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserRequest model)
+        {
+            var user = await _users.Authenticate(model.Username, model.Password);
+
+            if (user == null)
+                return BadRequest(new {message = "Username or password is incorrect"});
+
+            return Ok(user);
         }
         
         [HttpGet("")]
