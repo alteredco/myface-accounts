@@ -15,6 +15,7 @@ export interface User {
     email: string;
     profileImageUrl: string;
     coverImageUrl: string;
+    hashedPassword: string;
 }
 
 export interface Interaction {

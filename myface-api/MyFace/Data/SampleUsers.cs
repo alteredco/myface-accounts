@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MyFace.Helpers;
 using MyFace.Models.Database;
 
 namespace MyFace.Data
@@ -119,28 +120,10 @@ namespace MyFace.Data
         {
             return Enumerable.Range(0, NumberOfUsers).Select(CreateRandomUser);
         }
-        
-        public static byte[] GenerateSalt()
-        {
-            byte[] salt = new byte[128 / 8];
-            return salt;
-        }
-
-        public static string GenerateHash(string pwd, byte[] salt)
-        {
-            string hashedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: pwd,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256/8
-            ));
-
-            return hashedPwd;
-        }
 
         private static User CreateRandomUser(int index)
         {
+            byte[] generatedSalt = HashHelper.GenerateSalt();
             return new User
             {
                 FirstName = _data[index][0],
@@ -149,8 +132,8 @@ namespace MyFace.Data
                 Email = _data[index][3],
                 ProfileImageUrl = ImageGenerator.GetProfileImage(_data[index][2]),
                 CoverImageUrl = ImageGenerator.GetCoverImage(index),
-                HashedPassword = GenerateHash((_data[index][4]), GenerateSalt()),
-                Salt = GenerateSalt()
+                HashedPassword = HashHelper.GenerateHash((_data[index][4]), generatedSalt),
+                Salt = generatedSalt
             };
         }
     }
