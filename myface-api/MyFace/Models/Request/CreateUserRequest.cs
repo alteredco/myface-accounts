@@ -28,5 +28,7 @@ namespace MyFace.Models.Request
         [Required]
         [PasswordPropertyText]
         public string Password { get; set; }
+        
+        public byte[] Salt { get; set; }
     }
 }

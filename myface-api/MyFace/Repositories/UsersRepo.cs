@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using MyFace.Helpers;
 using MyFace.Models.Database;
@@ -10,11 +14,11 @@ namespace MyFace.Repositories
 {
     public interface IUsersRepo
     {
-        Task<User> Authenticate(string username, string password);
-        Task<IEnumerable<User>> GetAll();
-        IEnumerable<User> Search(SearchRequest search);
-        int Count(SearchRequest search);
+        User Authenticate(string username, string password);
+        IEnumerable<User> Search(UserSearchRequest search);
+        int Count(UserSearchRequest search);
         User GetById(int id);
+        User GetByUserName(string username);
         User Create(CreateUserRequest newUser);
         User Update(int id, UpdateUserRequest update);
         void Delete(int id);
@@ -23,30 +27,35 @@ namespace MyFace.Repositories
     public class UsersRepo : IUsersRepo
     {
         private readonly MyFaceDbContext _context;
+        private readonly IHashHelper _hashHelper;
+        private IUsersRepo _usersRepoImplementation;
 
-        public UsersRepo(MyFaceDbContext context)
+        public UsersRepo(MyFaceDbContext context, IHashHelper hashHelper)
         {
             _context = context;
+            _hashHelper = hashHelper;
         }
 
-        public async Task<User> Authenticate(string username, string password)
+        public User Authenticate(string username, string password, byte[] salt)
         {
-            var user = await Task.Run(
-                () => _context.Users.SingleOrDefault(x => x.Username == username && x.HashedPassword == password)
-                );
-
-            if (user == null)
-                return null;
-
-            return user.WithoutPassword();
+            try
+            {
+               var user = _context.Users.SingleOrDefault(user => 
+                   user.Username == username && user.HashedPassword == _hashHelper.GenerateHash(password, salt));
+               return user;
+            }
+            catch
+            {
+                throw new SystemException("could not authenticate user");
+            }
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public User Authenticate(string username, string password)
         {
-            return await Task.Run(() => _context.Users.WithoutPasswords());
+            return _usersRepoImplementation.Authenticate(username, password);
         }
 
-        public IEnumerable<User> Search(SearchRequest search)
+        public IEnumerable<User> Search(UserSearchRequest search)
         {
             return _context.Users
                 .Where(p => search.Search == null || 
@@ -61,7 +70,7 @@ namespace MyFace.Repositories
                 .Take(search.PageSize);
         }
 
-        public int Count(SearchRequest search)
+        public int Count(UserSearchRequest search)
         {
             return _context.Users
                 .Count(p => search.Search == null || 
@@ -79,8 +88,15 @@ namespace MyFace.Repositories
                 .Single(user => user.Id == id);
         }
 
+        public User GetByUserName(string username)
+        {
+            return _context.Users
+                .SingleOrDefault(user => user.Username == username);
+        }
+
         public User Create(CreateUserRequest newUser)
         {
+            var salt = _hashHelper.GenerateSalt();
             var insertResponse = _context.Users.Add(new User
             {
                 FirstName = newUser.FirstName,
@@ -89,6 +105,8 @@ namespace MyFace.Repositories
                 Username = newUser.Username,
                 ProfileImageUrl = newUser.ProfileImageUrl,
                 CoverImageUrl = newUser.CoverImageUrl,
+                Salt = salt,
+                HashedPassword = _hashHelper.GenerateHash(newUser.Password, salt)
             });
             _context.SaveChanges();
 

@@ -16,7 +16,6 @@ export function UserCard(props: UserCardProps) {
                 <div className="user-details">
                     <div className="name">{props.user.displayName}</div>
                     <div className="username">{props.user.username}</div>
-                    <div className="username">{props.user.hashedPassword}</div>
                 </div>
             </Link>
         </Card>

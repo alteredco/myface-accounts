@@ -47,12 +47,13 @@ namespace MyFace
             
             services.AddControllers();
 
-            //configure basic authentication
+            /*//configure basic authentication
             services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticateHelper>("BasicAuthentication", null);
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticateHelper>("BasicAuthentication", null);*/
 
             services.AddTransient<IPostsRepo, PostsRepo>();
             services.AddTransient<IUsersRepo, UsersRepo>();
+            services.AddTransient<IHashHelper, HashHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,6 +11,7 @@ namespace MyFace.Data
     public static class SampleUsers
     {
         public static int NumberOfUsers = 100;
+        private static HashHelper _hashHelper = new HashHelper();
         
         private static IList<IList<string>> _data = new List<IList<string>>
         {
@@ -123,7 +124,7 @@ namespace MyFace.Data
 
         private static User CreateRandomUser(int index)
         {
-            byte[] generatedSalt = HashHelper.GenerateSalt();
+            byte[] generatedSalt = _hashHelper.GenerateSalt();
             return new User
             {
                 FirstName = _data[index][0],
@@ -132,8 +133,8 @@ namespace MyFace.Data
                 Email = _data[index][3],
                 ProfileImageUrl = ImageGenerator.GetProfileImage(_data[index][2]),
                 CoverImageUrl = ImageGenerator.GetCoverImage(index),
-                HashedPassword = HashHelper.GenerateHash((_data[index][4]), generatedSalt),
-                Salt = generatedSalt
+                Salt = generatedSalt,
+                HashedPassword = _hashHelper.GenerateHash(_data[index][4], generatedSalt)
             };
         }
     }

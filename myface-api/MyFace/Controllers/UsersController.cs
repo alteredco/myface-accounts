@@ -19,21 +19,9 @@ namespace MyFace.Controllers
         {
             _users = users;
         }
-        
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticateUserRequest model)
-        {
-            var user = _users.Authenticate(model.Username, model.Password);
 
-            if (user == null)
-                return BadRequest(new {message = "Username or password is incorrect"});
-
-            return Ok(user);
-        }
-        
         [HttpGet("")]
-        public ActionResult<UserListResponse> Search([FromQuery] SearchRequest searchRequest)
+        public ActionResult<UserListResponse> Search([FromQuery] UserSearchRequest searchRequest)
         {
             var users = _users.Search(searchRequest);
             var userCount = _users.Count(searchRequest);
@@ -45,6 +33,18 @@ namespace MyFace.Controllers
         {
             var user = _users.GetById(id);
             return new UserResponse(user);
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] AuthenticateUserRequest model)
+        {
+            var user = _users.Authenticate(model.Username, model.Password);
+
+            if (user == null)
+                return BadRequest(new {message = "Username or password is incorrect"});
+
+            return Ok(user);
         }
 
         [HttpPost("create")]
