@@ -51,9 +51,7 @@ export interface NewUser {
     hashedPassword: string;
 }
 
-export function basicAuthHeader() {
-    const username = localStorage.getItem("username");
-    const password = localStorage.getItem("password");
+export function basicAuthHeader(username: string, password: string) {
     const encodedValue = btoa(`${username}:${password}`);
     return `Basic ${encodedValue}`;
 }
@@ -63,25 +61,29 @@ export async function fetchUsers(searchTerm: string, page: number, pageSize: num
     return await response.json();
 }
 
-export async function fetchUser(userId: string | number): Promise<User> {
+export async function fetchUser(userId: string | number, username: string, password: string): Promise<User> {
     
     const response = await fetch(`https://localhost:5001/users/${userId}`, {
         headers: {
-            Authorization: basicAuthHeader()
+            Authorization: basicAuthHeader(username, password)
         }
     });
     return await response.json();
 }
 
-export async function fetchPosts(page: number, pageSize: number): Promise<ListResponse<Post>> {
-    const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}`);
+export async function fetchPosts(page: number, pageSize: number, username: string, password: string): Promise<ListResponse<Post>> {
+    const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}`, {
+        headers: {
+            Authorization: basicAuthHeader(username, password)
+        }
+    });
     return await response.json();
 }
 
-export async function fetchPostsForUser(page: number, pageSize: number, userId: string | number) {
+export async function fetchPostsForUser(page: number, pageSize: number, userId: string | number,  username: string, password: string) {
     const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}&user=${userId}`, {
         headers: {
-            Authorization: basicAuthHeader()
+            Authorization: basicAuthHeader(username, password)
         }
     });
     return await response.json();

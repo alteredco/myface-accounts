@@ -9,10 +9,6 @@ import {LoginContext, LoginManager} from "../Components/LoginManager/LoginManage
 import {Profile} from "../Pages/Profile/Profile";
 import {CreatePost} from "../Pages/CreatePost/CreatePost";
 
-enum AuthRoutes {
-    feed = '/',
-}
-
 function Routes(): ReactElement {
     const loginContext = useContext(LoginContext);
     
@@ -22,8 +18,7 @@ function Routes(): ReactElement {
     
     return (
         <Switch>
-            <Route exact path="/" component={Login}/>
-            <Route exact path="/feed" component={Feed} />
+            <Route exact path="/" component={Feed}/>
             <Route exact path="/users" component={Users}/>
             <Route exact path="/users/:id" component={Profile}/>
             <Route exact path="/new-post" component={CreatePost}/>
