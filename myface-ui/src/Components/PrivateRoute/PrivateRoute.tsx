@@ -1,12 +1,39 @@
 ﻿import React from "react";
-import {Route, Redirect} from "react-router-dom";
-import {Profile} from "../../Pages/Profile/Profile";
+import {RouteComponentProps, Route, Redirect} from "react-router-dom";
+
+interface Props {
+    Component: React.FC<RouteComponentProps>
+    path: string;
+    exact?: boolean;
+}
 
 /*
-export function PrivateRoute({component: Profile}) {
-    <Route render={props => (
-       localStorage.getItem('user')
-        ? <Profile {props.id} />
-        :<Redirect to={{ pathname: '/login', state: {from: props.location} }} />
-    )}/>
-}*/
+export function PrivateRoute({Component, path, exact = false }:Props):JSX.Element{
+    const isAuth = !!localStorage.getItem(ACCESS_TOKEN);
+    const message = 'Please login to view this page';
+    return (
+        <Route 
+            exact = {exact}
+            path = {path}
+            render = {(props: RouteComponentProps) => 
+                isAuth ? (
+                    <Component {...props} />
+                ) : (
+                    <Redirect 
+                        to={{
+                            pathname: NonAuthRoutes.login,
+                            state: {
+                                message,
+                                requestedPath: path
+                            }
+                    }}
+                    />
+                )
+                
+            }
+        />
+        )
+    
+}
+*/
+

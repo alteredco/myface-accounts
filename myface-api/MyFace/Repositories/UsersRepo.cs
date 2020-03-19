@@ -50,11 +50,6 @@ namespace MyFace.Repositories
             }
         }
 
-        public User Authenticate(string username, string password)
-        {
-            return _usersRepoImplementation.Authenticate(username, password);
-        }
-
         public IEnumerable<User> Search(UserSearchRequest search)
         {
             return _context.Users

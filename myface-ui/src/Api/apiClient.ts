@@ -51,7 +51,12 @@ export interface NewUser {
     hashedPassword: string;
 }
 
-
+export function basicAuthHeader() {
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+    const encodedValue = btoa(`${username}:${password}`);
+    return `Basic ${encodedValue}`;
+}
 
 export async function fetchUsers(searchTerm: string, page: number, pageSize: number): Promise<ListResponse<User>> {
     const response = await fetch(`https://localhost:5001/users?search=${searchTerm}&page=${page}&pageSize=${pageSize}`);
@@ -60,7 +65,11 @@ export async function fetchUsers(searchTerm: string, page: number, pageSize: num
 
 export async function fetchUser(userId: string | number): Promise<User> {
     
-    const response = await fetch(`https://localhost:5001/users/${userId}`);
+    const response = await fetch(`https://localhost:5001/users/${userId}`, {
+        headers: {
+            Authorization: basicAuthHeader()
+        }
+    });
     return await response.json();
 }
 
@@ -70,7 +79,11 @@ export async function fetchPosts(page: number, pageSize: number): Promise<ListRe
 }
 
 export async function fetchPostsForUser(page: number, pageSize: number, userId: string | number) {
-    const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}&user=${userId}`);
+    const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}&user=${userId}`, {
+        headers: {
+            Authorization: basicAuthHeader()
+        }
+    });
     return await response.json();
 }
 

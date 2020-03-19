@@ -1,4 +1,5 @@
 ﻿import React, {createContext, ReactNode, useState} from "react";
+/*import {authHeader} from "../../Api/authHeader";*/
 
 export const LoginContext = createContext({
     isLoggedIn: false,
@@ -21,6 +22,30 @@ export function LoginManager(props: LoginManagerProps): JSX.Element {
     function logOut() {
         setLoggedIn(false);
     }
+    
+/*    function getAll():JSX.Element {
+        const request = {
+            method: 'GET',
+            headers: authHeader()
+        };
+        return fetch(`${config.apiUrl}/users`, request).then(handleResponse);
+    }
+    
+    function handleResponse(response){
+        response.text().then(text => {
+            const data = text && JSON.parse(text);
+            if(!response.ok){
+               if(response.status === 401){
+                   logOut();
+                   location.reload(true); 
+               }
+                const error = (data && data.message)|| response.statusText;
+                return Promise.reject(error);
+            }
+            return data;
+        });
+    }*/
+    
     
     const context = {
         isLoggedIn: loggedIn,
